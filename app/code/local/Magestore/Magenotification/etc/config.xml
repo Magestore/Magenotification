@@ -2,7 +2,7 @@
 <config>
     <modules>
         <Magestore_Magenotification>
-            <version>0.1.4</version>
+            <version>0.1.5</version>
         </Magestore_Magenotification>
     </modules>
     <admin>
@@ -17,26 +17,24 @@
         </routers>
     </admin>
     <adminhtml>
-		<!--
-		<events>
-			<controller_action_predispatch>
-				<observers>
-				  <magestore_magenotification_observer>
-					<type>singleton</type>
-					<class>magenotification/observer</class>
-					<method>controllerActionPredispatch</method>
-				  </magestore_magenotification_observer>
-			   </observers>					
-			</controller_action_predispatch>		
-		</events>		
-		-->	
-		<layout>
-			<updates>
-				<magenotification>
-					<file>magenotification.xml</file>
-				</magenotification>
-			</updates>
-		</layout>        
+        <events>
+            <controller_action_predispatch>
+                <observers>
+                    <magestore_magenotification_observer>
+                        <type>singleton</type>
+                        <class>magenotification/observer</class>
+                        <method>controllerActionPredispatch</method>
+                    </magestore_magenotification_observer>
+                </observers>					
+            </controller_action_predispatch>		
+        </events>		
+        <layout>
+            <updates>
+                <magenotification>
+                    <file>magenotification.xml</file>
+                </magenotification>
+            </updates>
+        </layout>        
     </adminhtml>   
     <global>
         <models>
@@ -60,8 +58,8 @@
                         <table>magenotification_log</table>
                     </logger>
                     <license>
-                    	<table>magenotification_license</table>
-					</license>
+                        <table>magenotification_license</table>
+                    </license>
                 </entities>
             </magenotification_mysql4>
         </models>
@@ -89,11 +87,6 @@
             <magenotification>
                 <class>Magestore_Magenotification_Block</class>
             </magenotification>
-			<adminhtml>
-                <rewrite>
-                    <notification_window>Magestore_Magenotification_Block_Adminhtml_Notification_Window</notification_window>
-                </rewrite>
-            </adminhtml>
         </blocks>
         <helpers>
             <magenotification>
@@ -101,13 +94,13 @@
             </magenotification>
         </helpers>
     </global>
-	<default>
-		<magenotification>
-			<general>				
-				<frequency>24</frequency>
-				<last_update backend_model="magenotification/source_time"></last_update>
-				<magestore_url>http://www.magestore.com/index.php</magestore_url>
-			</general>		
-		</magenotification>
-	</default>		
+    <default>
+        <magenotification>
+            <general>				
+                <frequency>24</frequency>
+                <last_update backend_model="magenotification/source_time"></last_update>
+                <magestore_url>http://www.magestore.com/index.php</magestore_url>
+            </general>		
+        </magenotification>
+    </default>		
 </config>

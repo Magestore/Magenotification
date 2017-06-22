@@ -7,7 +7,7 @@ class Magestore_Magenotification_Model_Observer {
         try {
             Mage::getModel('magenotification/magenotification')->checkUpdate();
         } catch (Exception $e) {
-            
+            return $e->getMessage();
         }
     }
 

@@ -1,20 +1,22 @@
 <?php
 
-class Magestore_Magenotification_Model_Magenotification extends Mage_Core_Model_Abstract {
+class Magestore_Magenotification_Model_Magenotification extends Mage_Core_Model_Abstract
+{
 
     const XML_FREQUENCY_PATH = 'magenotification/general/frequency';
     const XML_LAST_UPDATE_PATH = 'magenotification/general/last_update';
     const XML_MAGESTORE_URL_PATH = 'magenotification/general/magestore_url';
 
-    public function _construct() {
+    public function _construct()
+    {
         parent::_construct();
         $this->_init('magenotification/magenotification');
     }
 
-    public function checkUpdate() {
+    public function checkUpdate()
+    {
         $timestamp = Mage::getModel('core/date')->timestamp(time());
-
-        if (($this->getFrequency() + $this->getLastUpdate()) > $timestamp) {
+        if (($this->getFrequency() + $this->getLastUpdate()) > $timestamp && 0) {
             return $this;
         }
 
@@ -31,11 +33,11 @@ class Magestore_Magenotification_Model_Magenotification extends Mage_Core_Model_
                     'added_date' => $this->getDate((string) $item->date_added),
                     'related_extensions' => strtolower($item->related_extensions)
                 );
-
                 if ($this->allowGetFeed($item_data)) {
                     $noticeData[] = $item_data;
                 }
             }
+
             if ($noticeData) {
                 $this->parse(array_reverse($noticeData));
 
@@ -45,7 +47,8 @@ class Magestore_Magenotification_Model_Magenotification extends Mage_Core_Model_
         return $this;
     }
 
-    public function allowGetFeed($item) {
+    public function allowGetFeed($item)
+    {
         if ($item['related_extensions'] == null || $item['related_extensions'] == '0') {
             return true;
         }
@@ -74,12 +77,14 @@ class Magestore_Magenotification_Model_Magenotification extends Mage_Core_Model_
         return false;
     }
 
-    public function getLastUpdate() {
+    public function getLastUpdate()
+    {
         $timestring = Mage::getStoreConfig(self::XML_LAST_UPDATE_PATH);
         return strtotime($timestring);
     }
 
-    public function setLastUpdate() {
+    public function setLastUpdate()
+    {
         $config = Mage::getModel('core/config');
         $timestamp = Mage::getModel('core/date')->timestamp(time());
 
@@ -87,16 +92,19 @@ class Magestore_Magenotification_Model_Magenotification extends Mage_Core_Model_
         $config->cleanCache();
     }
 
-    public function getFrequency() {
+    public function getFrequency()
+    {
         return Mage::getStoreConfig(self::XML_FREQUENCY_PATH) * 3600;
     }
 
-    public function getMagestoreUrl() {
-        $lastTimeNotice = strtotime($this->getLastNotice()->getAddedDate());
+    public function getMagestoreUrl()
+    {
+        $lastTimeNotice = strtotime(now());
         return 'https://www.magestore.com/service/notification3.xml?lastupdatetime=' . $lastTimeNotice;
     }
 
-    public function getNotificationData() {
+    public function getNotificationData()
+    {
         $curl = new Varien_Http_Adapter_Curl();
         $curl->setConfig(array(
             'timeout' => 2
@@ -119,7 +127,8 @@ class Magestore_Magenotification_Model_Magenotification extends Mage_Core_Model_
         return $xml;
     }
 
-    public function getNotificationXml() {
+    public function getNotificationXml()
+    {
         try {
             $data = $this->getNotificationData();
             $xml = new SimpleXMLElement($data);
@@ -130,38 +139,28 @@ class Magestore_Magenotification_Model_Magenotification extends Mage_Core_Model_
         return $xml;
     }
 
-    public function getDate($rssDate) {
+    public function getDate($rssDate)
+    {
         return gmdate('Y-m-d H:i:s', strtotime($rssDate));
     }
 
-    public function parse($data) {
+    public function parse($data)
+    {
         if (count($data)) {
             try {
-                foreach ($data as $item) {
-                    if (!$this->is_existedUrl($item['url'])) {
-                        $this->setData($item)->save();
-                        $this->setId(null);
+                foreach ($data as &$item) {
+                    if(isset($item['related_extensions'])) {
+                        unset($item['related_extensions']);
+                    }
+                    if(isset($item['added_date'])) {
+                        unset($item['added_date']);
                     }
                 }
+                Mage::getModel('adminNotification/inbox')->parse($data);
             } catch (Exception $e) {
-                Mage::getSingleton('core/session')->addError($e->getMessage());
+                return $e->getMessage();
             }
         }
-    }
-
-    public function is_existedUrl($url) {
-        $collection = $this->getCollection()
-                ->addFieldToFilter('url', (string) $url);
-        if ($collection->getSize())
-            return true;
-        return false;
-    }
-
-    public function getLastNotice() {
-        $item = $this->getCollection()
-                ->setOrder('added_date', 'DESC')
-                ->getFirstItem();
-        return $item;
     }
 
 }
