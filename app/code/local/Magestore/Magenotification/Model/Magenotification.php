@@ -16,10 +16,19 @@ class Magestore_Magenotification_Model_Magenotification extends Mage_Core_Model_
     public function checkUpdate()
     {
         $timestamp = Mage::getModel('core/date')->timestamp(time());
-        if (($this->getFrequency() + $this->getLastUpdate()) > $timestamp && 0) {
+        
+        var_dump($timestamp);
+        var_dump($this->getFrequency() + $this->getLastUpdate());
+        die();
+        
+        if (($this->getFrequency() + $this->getLastUpdate()) > $timestamp) {
+             die();
             return $this;
         }
 
+        var_dump('here');
+        
+        die();
         $notificationXml = $this->getNotificationData();
         $noticeData = array();
         if ($notificationXml && $notificationXml->item) {
@@ -80,6 +89,7 @@ class Magestore_Magenotification_Model_Magenotification extends Mage_Core_Model_
     public function getLastUpdate()
     {
         $timestring = Mage::getStoreConfig(self::XML_LAST_UPDATE_PATH);
+        $timestring = $timestring ? $timestring : date('Y-m-d H:i:s');
         return strtotime($timestring);
     }
 
@@ -94,7 +104,9 @@ class Magestore_Magenotification_Model_Magenotification extends Mage_Core_Model_
 
     public function getFrequency()
     {
-        return Mage::getStoreConfig(self::XML_FREQUENCY_PATH) * 3600;
+        $frequency =  Mage::getStoreConfig(self::XML_FREQUENCY_PATH);
+        $frequency = $frequency ? $frequency : 1;
+        return $frequency * 3600;
     }
 
     public function getMagestoreUrl()
