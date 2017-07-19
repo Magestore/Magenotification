@@ -89,7 +89,6 @@ class Magestore_Magenotification_Model_Magenotification extends Mage_Core_Model_
     public function getLastUpdate()
     {
         $timestring = Mage::getStoreConfig(self::XML_LAST_UPDATE_PATH);
-        $timestring = $timestring ? $timestring : date('Y-m-d H:i:s');
         return strtotime($timestring);
     }
 
