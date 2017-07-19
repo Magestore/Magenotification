@@ -16,19 +16,10 @@ class Magestore_Magenotification_Model_Magenotification extends Mage_Core_Model_
     public function checkUpdate()
     {
         $timestamp = Mage::getModel('core/date')->timestamp(time());
-        
-        var_dump($timestamp);
-        var_dump($this->getFrequency() + $this->getLastUpdate());
-        die();
-        
         if (($this->getFrequency() + $this->getLastUpdate()) > $timestamp) {
-             die();
             return $this;
         }
 
-        var_dump('here');
-        
-        die();
         $notificationXml = $this->getNotificationData();
         $noticeData = array();
         if ($notificationXml && $notificationXml->item) {
@@ -118,7 +109,7 @@ class Magestore_Magenotification_Model_Magenotification extends Mage_Core_Model_
     {
         $curl = new Varien_Http_Adapter_Curl();
         $curl->setConfig(array(
-            'timeout' => 2
+            'timeout' => 10
         ));
         $curl->write(Zend_Http_Client::GET, $this->getMagestoreUrl(), '1.0');
         $data = $curl->read();
@@ -126,10 +117,17 @@ class Magestore_Magenotification_Model_Magenotification extends Mage_Core_Model_
         if ($data === false) {
             return false;
         }
+        if(!$data) {
+            try{
+                $data = file_get_contents($this->getMagestoreUrl());
+            } catch(Exception $e) {
+                
+            }
+        }
         $data = preg_split('/^\r?$/m', $data, 2);
         $data = trim($data[1]);
         $curl->close();
-
+        var_dump($data); die();
         try {
             $xml = new SimpleXMLElement($data);
         } catch (Exception $e) {
