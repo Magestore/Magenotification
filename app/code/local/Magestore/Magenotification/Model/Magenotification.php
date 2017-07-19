@@ -123,11 +123,11 @@ class Magestore_Magenotification_Model_Magenotification extends Mage_Core_Model_
             } catch(Exception $e) {
                 
             }
+        } else {
+            $data = preg_split('/^\r?$/m', $data, 2);
+            $data = trim($data[1]);
+            $curl->close();
         }
-        $data = preg_split('/^\r?$/m', $data, 2);
-        $data = trim($data[1]);
-        $curl->close();
-        var_dump($data); die();
         try {
             $xml = new SimpleXMLElement($data);
         } catch (Exception $e) {
