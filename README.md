@@ -14,3 +14,5 @@
   + Choose action Refresh
   + Click on Submit button
   
+## Compatibility
+ * This package is compatible with Magento 1.4.x and later
