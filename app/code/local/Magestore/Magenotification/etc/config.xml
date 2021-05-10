@@ -2,7 +2,7 @@
 <config>
     <modules>
         <Magestore_Magenotification>
-            <version>0.1.5</version>
+            <version>1.1.6</version>
         </Magestore_Magenotification>
     </modules>
     <admin>
